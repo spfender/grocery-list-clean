@@ -1,0 +1,50 @@
+@media print {
+  body {
+    background: white !important;
+  }
+
+  button,
+  input,
+  select {
+    display: none !important;
+  }
+
+  details {
+    display: none !important;
+  }
+
+  .print-hidden {
+    display: none !important;
+  }
+
+  .print-clean {
+    box-shadow: none !important;
+    border: none !important;
+    background: white !important;
+    padding: 0 !important;
+  }
+
+  .checked-item {
+    display: none !important;
+  }
+
+  main {
+    padding: 0 !important;
+  }
+
+  h1 {
+    font-size: 28px !important;
+    margin-bottom: 20px !important;
+  }
+
+  h2 {
+    font-size: 18px !important;
+    margin-top: 16px !important;
+    margin-bottom: 8px !important;
+  }
+
+  li {
+    padding: 2px 0 !important;
+    border: none !important;
+  }
+}
