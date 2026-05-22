@@ -9,7 +9,7 @@ A shared realtime grocery list app built with Next.js, Tailwind CSS, Supabase, a
 * Auto-categorized grocery items
 * Learned category memory
 * Archive old grocery lists
-* Print-friendly view
+* Simple print-friendly view
 * Quick-add buttons
 * Persistent cloud storage
 * Custom app icon + installable home screen app
