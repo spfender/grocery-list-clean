@@ -136,8 +136,10 @@ function normalizeName(name: string) {
   return name.trim().toLowerCase().replace(/\s+/g, " ");
 }
 
-function getCategory(itemName: string) {
-  return categoryMap[normalizeName(itemName)] || "Other";
+function getCategory(itemName: string, learnedRules: Record<string, string>) {
+  const normalized = normalizeName(itemName);
+
+  return learnedRules[normalized] || categoryMap[normalized] || "Other";
 }
 
 function parseItemInput(input: string) {
@@ -176,6 +178,9 @@ export default function Home() {
   const [quantity, setQuantity] = useState("");
   const [category, setCategory] = useState("Auto");
   const [message, setMessage] = useState("");
+  const [categoryRules, setCategoryRules] = useState<Record<string, string>>(
+    {},
+  );
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -197,36 +202,49 @@ export default function Home() {
       if (archiveData) {
         setArchivedLists(archiveData);
       }
+      const { data: rulesData } = await supabase
+        .from("category_rules")
+        .select("*");
+
+      if (rulesData) {
+        const rulesObject: Record<string, string> = {};
+
+        rulesData.forEach((rule) => {
+          rulesObject[rule.item_name] = rule.category;
+        });
+
+        setCategoryRules(rulesObject);
+      }
 
       inputRef.current?.focus();
     }
 
     loadData();
     const channel = supabase
-  .channel("grocery-realtime")
-  .on(
-    "postgres_changes",
-    {
-      event: "*",
-      schema: "public",
-      table: "grocery_items",
-    },
-    async () => {
-      const { data } = await supabase
-        .from("grocery_items")
-        .select("*")
-        .order("created_at", { ascending: true });
+      .channel("grocery-realtime")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "grocery_items",
+        },
+        async () => {
+          const { data } = await supabase
+            .from("grocery_items")
+            .select("*")
+            .order("created_at", { ascending: true });
 
-      if (data) {
-        setItems(data);
-      }
-    },
-  )
-  .subscribe();
+          if (data) {
+            setItems(data);
+          }
+        },
+      )
+      .subscribe();
 
-return () => {
-  supabase.removeChannel(channel);
-};
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   async function addItem() {
@@ -236,8 +254,19 @@ return () => {
     const finalName = parsed.name.trim();
     const finalQuantity = quantity.trim() || parsed.quantity;
     const finalCategory =
-      category === "Auto" ? getCategory(finalName) : category;
+  category === "Auto" ? getCategory(finalName, categoryRules) : category;
 
+if (category !== "Auto") {
+  await supabase.from("category_rules").upsert({
+    item_name: normalizeName(finalName),
+    category: finalCategory,
+  });
+
+  setCategoryRules({
+    ...categoryRules,
+    [normalizeName(finalName)]: finalCategory,
+  });
+}
     const alreadyExists = items.some(
       (item) => normalizeName(item.name) === normalizeName(finalName),
     );
@@ -305,6 +334,31 @@ return () => {
     await supabase.from("grocery_items").delete().eq("id", id);
 
     setItems(items.filter((item) => item.id !== id));
+  }
+
+  async function updateItemCategory(item: GroceryItem, newCategory: string) {
+    await supabase
+      .from("grocery_items")
+      .update({ category: newCategory })
+      .eq("id", item.id);
+
+    await supabase.from("category_rules").upsert({
+      item_name: normalizeName(item.name),
+      category: newCategory,
+    });
+
+    setItems(
+      items.map((currentItem) =>
+        currentItem.id === item.id
+          ? { ...currentItem, category: newCategory }
+          : currentItem,
+      ),
+    );
+
+    setCategoryRules({
+      ...categoryRules,
+      [normalizeName(item.name)]: newCategory,
+    });
   }
 
   async function clearCompleted() {
@@ -514,6 +568,23 @@ return () => {
                             </span>
                           )}
                         </span>
+
+                        {item.category === "Other" && !item.checked && (
+                          <select
+                            className="ml-2 rounded-md border border-gray-300 px-2 py-1 text-sm"
+                            value={item.category}
+                            onChange={(event) =>
+                              updateItemCategory(item, event.target.value)
+                            }
+                          >
+                            <option>Other</option>
+                            {categoryOrder
+                              .filter((category) => category !== "Other")
+                              .map((category) => (
+                                <option key={category}>{category}</option>
+                              ))}
+                          </select>
+                        )}
                       </label>
 
                       <button
