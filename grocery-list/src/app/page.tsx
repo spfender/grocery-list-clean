@@ -401,8 +401,8 @@ export default function Home() {
   );
 
   return (
-    <main className="min-h-screen bg-gray-100 p-4 text-gray-900">
-      <div className="mx-auto max-w-md">
+    <main className="min-h-screen bg-[#f7f7f5] p-2 text-gray-900">
+      <div className="mx-auto max-w-lg">
         <header className="mb-6 print-hidden">
           <div className="mb-4">
             <h1 className="text-4xl font-bold">Grocery List</h1>
@@ -414,26 +414,26 @@ export default function Home() {
           <div className="flex gap-2">
             <button
               onClick={() => window.print()}
-              className="flex-1 rounded-lg bg-white px-3 py-2 text-sm font-medium shadow"
+              className="flex-1 rounded-sm bg-white px-3 py-2 text-sm font-medium shadow"
             >
               Print
             </button>
 
             <button
               onClick={archiveCurrentList}
-              className="flex-1 rounded-lg bg-white px-3 py-2 text-sm font-medium shadow"
+              className="flex-1 rounded-sm bg-white px-3 py-2 text-sm font-medium shadow"
             >
               New List
             </button>
           </div>
         </header>
 
-        <section className="mb-6 rounded-xl bg-white p-4 shadow print-hidden">
+        <section className="mb-6 rounded-sm bg-white p-2 shadow print-hidden">
           <div className="mb-3">
             <label className="mb-1 block text-sm font-medium">Item</label>
             <input
               ref={inputRef}
-              className="w-full rounded-lg border border-gray-300 px-4 py-3"
+              className="w-full rounded-sm border border-gray-300 px-4 py-1.5"
               placeholder="Try: 2 milk, bananas x3, paper towels"
               value={newItem}
               onChange={(event) => {
@@ -450,7 +450,7 @@ export default function Home() {
             <div>
               <label className="mb-1 block text-sm font-medium">Quantity</label>
               <input
-                className="w-full rounded-lg border border-gray-300 px-4 py-3"
+                className="w-full rounded-sm border border-gray-300 px-4 py-1.5"
                 placeholder="Optional"
                 value={quantity}
                 onChange={(event) => setQuantity(event.target.value)}
@@ -460,7 +460,7 @@ export default function Home() {
             <div>
               <label className="mb-1 block text-sm font-medium">Category</label>
               <select
-                className="w-full rounded-lg border border-gray-300 px-4 py-3"
+                className="w-full rounded-sm border border-gray-300 px-4 py-1.5"
                 value={category}
                 onChange={(event) => setCategory(event.target.value)}
               >
@@ -473,13 +473,13 @@ export default function Home() {
           </div>
 
           {message && (
-            <p className="mb-3 rounded-lg bg-yellow-50 px-3 py-2 text-sm text-yellow-800">
+            <p className="mb-3 rounded-sm bg-yellow-50 px-3 py-2 text-sm text-yellow-800">
               {message}
             </p>
           )}
 
           <button
-            className="mb-3 w-full rounded-lg bg-black px-4 py-3 font-semibold text-white"
+            className="mb-3 w-full rounded-sm bg-black px-4 py-1.5 font-semibold text-white"
             onClick={addItem}
           >
             Add Item
@@ -487,14 +487,14 @@ export default function Home() {
 
           <div className="flex gap-2">
             <button
-              className="flex-1 rounded-lg bg-pink-200 px-4 py-3 font-semibold text-pink-900"
+              className="flex-1 rounded-sm bg-pink-200 px-4 py-1.5 font-semibold text-pink-900"
               onClick={() => addQuickItem("✨ snackie ✨")}
             >
               Snackie
             </button>
 
             <button
-              className="flex-1 rounded-lg bg-yellow-200 px-4 py-3 font-semibold text-yellow-900"
+              className="flex-1 rounded-sm bg-yellow-200 px-4 py-1.5 font-semibold text-yellow-900"
               onClick={() => addQuickItem("✨ chippie ✨")}
             >
               Chippie
@@ -516,7 +516,7 @@ export default function Home() {
         </div>
 
         {items.length === 0 && (
-          <div className="rounded-xl bg-white p-6 text-center text-gray-500 shadow">
+          <div className="rounded-sm bg-white p-6 text-center text-gray-500 shadow">
             Your grocery list is empty.
           </div>
         )}
@@ -530,15 +530,15 @@ export default function Home() {
             return (
               <section
                 key={category}
-                className="rounded-xl bg-white p-4 shadow print-clean"
+                className="py-3"
               >
-                <h2 className="mb-3 text-xl font-semibold">{category}</h2>
+                <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-black">{category}</h2>
 
                 <ul className="space-y-2">
                   {categoryItems.map((item) => (
                     <li
                       key={item.id}
-                      className={`flex items-center justify-between gap-3 rounded-lg border p-3 ${
+                      className={`flex items-center justify-between gap-3 border-b border-gray-200 py-2 ${
                         item.checked ? "checked-item" : ""
                       } ${
                         item.checked
@@ -571,7 +571,7 @@ export default function Home() {
 
                         {item.category === "Other" && !item.checked && (
                           <select
-                            className="ml-2 rounded-md border border-gray-300 px-2 py-1 text-sm"
+                            className="ml-2 rounded-sm border border-gray-300 px-2 py-1 text-sm"
                             value={item.category}
                             onChange={(event) =>
                               updateItemCategory(item, event.target.value)
@@ -602,14 +602,14 @@ export default function Home() {
         </div>
 
         {archivedLists.length > 0 && (
-          <section className="mt-8 rounded-xl bg-white p-4 shadow print-hidden">
+          <section className="mt-8 rounded-sm bg-white p-2 shadow print-hidden">
             <h2 className="mb-3 text-xl font-semibold">Archived Lists</h2>
 
             <div className="space-y-3">
               {archivedLists.map((list) => (
                 <details
                   key={list.id}
-                  className="rounded-lg border border-gray-200 p-3"
+                  className="rounded-sm border border-gray-200 p-3"
                 >
                   <summary className="cursor-pointer font-medium">
                     {list.date} — {list.items.length} item(s)
