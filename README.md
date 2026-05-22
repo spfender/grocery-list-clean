@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Grocery List
 
-## Getting Started
+A shared realtime grocery list app built with Next.js, Tailwind CSS, Supabase, and Vercel.
 
-First, run the development server:
+## Features
+
+* Shared realtime grocery syncing
+* Mobile-friendly layout
+* Auto-categorized grocery items
+* Learned category memory
+* Archive old grocery lists
+* Print-friendly view
+* Quick-add buttons
+* Persistent cloud storage
+* Custom app icon + installable home screen app
+
+## Stack
+
+* Next.js
+* React
+* Tailwind CSS
+* Supabase
+* Vercel
+
+## Local Development
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run locally:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```text
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Environment Variables
 
-## Learn More
+Create:
 
-To learn more about Next.js, take a look at the following resources:
+```text
+.env.local
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Add:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_publishable_key
+```
 
-## Deploy on Vercel
+## Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The app is deployed with Vercel and automatically redeploys on pushes to `main`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Design Direction
+
+The UI is inspired by:
+
+* Dieter Rams
+* Dense, minimal information
+
+## Future Ideas
+
+* Discord integration
+* Store-route sorting
+* Favorites / recurring items
+* Shared user attribution
+* Drag-and-drop category ordering
+* Meal planning/recipe integration
