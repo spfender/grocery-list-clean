@@ -1,6 +1,6 @@
 "use client";
 
-import { supabase } from "@/lib/supabase";
+import { supabase } from "../lib/supabase";
 import "./print.css";
 import { useEffect, useRef, useState } from "react";
 
@@ -256,6 +256,17 @@ export default function Home() {
     const finalCategory =
       category === "Auto" ? getCategory(finalName, categoryRules) : category;
 
+    if (category !== "Auto") {
+      await supabase.from("category_rules").upsert({
+        item_name: normalizeName(finalName),
+        category: finalCategory,
+      });
+
+      setCategoryRules({
+        ...categoryRules,
+        [normalizeName(finalName)]: finalCategory,
+      });
+    }
     const alreadyExists = items.some(
       (item) => normalizeName(item.name) === normalizeName(finalName),
     );
@@ -390,12 +401,14 @@ export default function Home() {
   );
 
   return (
-    <main className="min-h-screen bg-gray-100 p-4 text-gray-900">
-      <div className="mx-auto max-w-md">
+    <main className="min-h-screen bg-[#f7f7f5] p-2 text-gray-900">
+      <div className="mx-auto max-w-lg">
         <header className="mb-6 print-hidden">
-          <div className="mb-4">
-            <h1 className="text-4xl font-bold">Grocery List</h1>
-            <p className="mt-1 text-sm text-gray-500">
+          <div className="mb-1">
+            <h1 className="text-3xl text-center font-semibold tracking-tight">
+              Grocery List
+            </h1>
+            <p className="mt-1 text-sm text-center text-gray-500">
               Add items, sort by category, archive lists, and print when needed.
             </p>
           </div>
@@ -403,27 +416,27 @@ export default function Home() {
           <div className="flex gap-2">
             <button
               onClick={() => window.print()}
-              className="flex-1 rounded-lg bg-white px-3 py-2 text-sm font-medium shadow"
+              className="flex-1 rounded-sm bg-white px-3 py-2 text-sm font-medium shadow"
             >
               Print
             </button>
 
             <button
               onClick={archiveCurrentList}
-              className="flex-1 rounded-lg bg-white px-3 py-2 text-sm font-medium shadow"
+              className="flex-1 rounded-sm bg-white px-3 py-2 text-sm font-medium shadow"
             >
               New List
             </button>
           </div>
         </header>
 
-        <section className="mb-6 rounded-xl bg-white p-4 shadow print-hidden">
-          <div className="mb-3">
+        <section className="mb-2 rounded-sm bg-white p-2 shadow print-hidden">
+          <div className="mb-1">
             <label className="mb-1 block text-sm font-medium">Item</label>
             <input
               ref={inputRef}
-              className="w-full rounded-lg border border-gray-300 px-4 py-3"
-              placeholder="Try: 2 milk, bananas x3, paper towels"
+              className="w-full rounded-sm border border-gray-300 px-4 py-1.5"
+              placeholder="Try: 2 milk, bananas x3, paper towels..."
               value={newItem}
               onChange={(event) => {
                 setNewItem(event.target.value);
@@ -435,11 +448,11 @@ export default function Home() {
             />
           </div>
 
-          <div className="mb-4 grid grid-cols-2 gap-3">
+          <div className="mb-2 grid grid-cols-2 gap-3">
             <div>
               <label className="mb-1 block text-sm font-medium">Quantity</label>
               <input
-                className="w-full rounded-lg border border-gray-300 px-4 py-3"
+                className="h-9 w-full rounded-sm border border-gray-300 px-4 py-1.5"
                 placeholder="Optional"
                 value={quantity}
                 onChange={(event) => setQuantity(event.target.value)}
@@ -449,7 +462,7 @@ export default function Home() {
             <div>
               <label className="mb-1 block text-sm font-medium">Category</label>
               <select
-                className="w-full rounded-lg border border-gray-300 px-4 py-3"
+                className="h-9 w-full rounded-sm border border-gray-300 px-4 py-1.5"
                 value={category}
                 onChange={(event) => setCategory(event.target.value)}
               >
@@ -462,13 +475,13 @@ export default function Home() {
           </div>
 
           {message && (
-            <p className="mb-3 rounded-lg bg-yellow-50 px-3 py-2 text-sm text-yellow-800">
+            <p className="mb-1 rounded-sm bg-yellow-50 px-3 py-2 text-sm text-yellow-800">
               {message}
             </p>
           )}
 
           <button
-            className="mb-3 w-full rounded-lg bg-black px-4 py-3 font-semibold text-white"
+            className="mb-2 w-full rounded-none bg-black px-4 py-1.5 font-semibold text-white"
             onClick={addItem}
           >
             Add Item
@@ -476,14 +489,14 @@ export default function Home() {
 
           <div className="flex gap-2">
             <button
-              className="flex-1 rounded-lg bg-pink-200 px-4 py-3 font-semibold text-pink-900"
+              className="flex-1 rounded-none text-sm h-8 bg-pink-200 px-4 py-1.5 font-semibold text-pink-900"
               onClick={() => addQuickItem("✨ snackie ✨")}
             >
               Snackie
             </button>
 
             <button
-              className="flex-1 rounded-lg bg-yellow-200 px-4 py-3 font-semibold text-yellow-900"
+              className="flex-1 rounded-none text-sm h-8 bg-yellow-200 px-4 py-1.5 font-semibold text-yellow-900"
               onClick={() => addQuickItem("✨ chippie ✨")}
             >
               Chippie
@@ -491,7 +504,7 @@ export default function Home() {
           </div>
         </section>
 
-        <div className="mb-4 flex items-center justify-between text-sm print-hidden">
+        <div className="mb-1 flex items-center justify-between text-sm print-hidden">
           <span className="text-gray-500">
             {items.filter((item) => !item.checked).length} active item(s)
           </span>
@@ -505,42 +518,37 @@ export default function Home() {
         </div>
 
         {items.length === 0 && (
-          <div className="rounded-xl bg-white p-6 text-center text-gray-500 shadow">
+          <div className="rounded-sm bg-white p-6 text-center text-gray-500 shadow">
             Your grocery list is empty.
           </div>
         )}
 
-        <div className="space-y-4">
+        <div className="space-y-0">
           {categories.map((category) => {
             const categoryItems = items
               .filter((item) => item.category === category)
               .sort((a, b) => Number(a.checked) - Number(b.checked));
 
             return (
-              <section
-                key={category}
-                className="rounded-xl bg-white p-4 shadow print-clean"
-              >
-                <h2 className="mb-3 text-xl font-semibold">{category}</h2>
+              <section key={category} className="py-1">
+                <h2 className="mb-1 mt-1 text-sm font-semibold uppercase tracking-wide text-black">
+                  {category}
+                </h2>
 
                 <ul className="space-y-2">
                   {categoryItems.map((item) => (
                     <li
                       key={item.id}
-                      className={`flex items-center justify-between gap-3 rounded-lg border p-3 ${
+                      className={`flex items-center justify-between gap-3 text-md border-b border-gray-200 py-1 ${
                         item.checked ? "checked-item" : ""
-                      } ${
-                        item.checked
-                          ? "border-gray-100 bg-gray-50"
-                          : "border-gray-200 bg-white"
-                      }`}
+                      } ${item.checked ? "checked-item opacity-50" : ""}`}
                     >
                       <label className="flex min-w-0 flex-1 items-center gap-3">
                         <input
                           type="checkbox"
                           checked={item.checked}
                           onChange={() => toggleItem(item.id)}
-                          className="h-5 w-5"
+                          className="h-3.5 w-3.5 appearance-none border border-gray-600 checked:bg-gray-900"
                         />
 
                         <span
@@ -560,7 +568,7 @@ export default function Home() {
 
                         {item.category === "Other" && !item.checked && (
                           <select
-                            className="ml-2 rounded-md border border-gray-300 px-2 py-1 text-sm"
+                            className="ml-2 rounded-sm border border-gray-300 px-2 py-1 text-sm"
                             value={item.category}
                             onChange={(event) =>
                               updateItemCategory(item, event.target.value)
@@ -577,10 +585,10 @@ export default function Home() {
                       </label>
 
                       <button
-                        className="text-sm text-gray-500"
+                        className="text-md font-bold text-gray-600"
                         onClick={() => deleteItem(item.id)}
                       >
-                        Remove
+                        x
                       </button>
                     </li>
                   ))}
@@ -591,14 +599,14 @@ export default function Home() {
         </div>
 
         {archivedLists.length > 0 && (
-          <section className="mt-8 rounded-xl bg-white p-4 shadow print-hidden">
-            <h2 className="mb-3 text-xl font-semibold">Archived Lists</h2>
+          <section className="mt-8 rounded-sm bg-white p-2 shadow print-hidden">
+            <h2 className="mb-1 text-lg text-center font-medium">Archived Lists</h2>
 
             <div className="space-y-3">
               {archivedLists.map((list) => (
                 <details
                   key={list.id}
-                  className="rounded-lg border border-gray-200 p-3"
+                  className="rounded-sm border border-gray-200 p-3"
                 >
                   <summary className="cursor-pointer font-medium">
                     {list.date} — {list.items.length} item(s)
