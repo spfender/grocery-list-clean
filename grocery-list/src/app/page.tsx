@@ -254,19 +254,19 @@ export default function Home() {
     const finalName = parsed.name.trim();
     const finalQuantity = quantity.trim() || parsed.quantity;
     const finalCategory =
-  category === "Auto" ? getCategory(finalName, categoryRules) : category;
+      category === "Auto" ? getCategory(finalName, categoryRules) : category;
 
-if (category !== "Auto") {
-  await supabase.from("category_rules").upsert({
-    item_name: normalizeName(finalName),
-    category: finalCategory,
-  });
+    if (category !== "Auto") {
+      await supabase.from("category_rules").upsert({
+        item_name: normalizeName(finalName),
+        category: finalCategory,
+      });
 
-  setCategoryRules({
-    ...categoryRules,
-    [normalizeName(finalName)]: finalCategory,
-  });
-}
+      setCategoryRules({
+        ...categoryRules,
+        [normalizeName(finalName)]: finalCategory,
+      });
+    }
     const alreadyExists = items.some(
       (item) => normalizeName(item.name) === normalizeName(finalName),
     );
